@@ -25,13 +25,22 @@
 #define GPIO_A_MODE_REG (uint32_t*)GPIO_A_BASE_ADDRESS
 #define GPIO_A_OUTPUT  ((uint32_t*)(GPIO_A_BASE_ADDRESS + 0x14))
 
-int main(void) {
 
+void delay(void){
+	for (uint64_t i = 0; i < 65535; i++) {
+	}
+	for (uint64_t i = 0; i < 65535; i++) {
+	}
+}
+
+int main(void) {
 	*RCC_AHB1_ENABLE_RE |= (*RCC_AHB1_ENABLE_RE | 0X01); //Enable clock for GPIOA
-	*GPIO_A_MODE_REG |= (*GPIO_A_MODE_REG | 0X400); //Change GPIOA, pin 5 mode to output mode
+	*GPIO_A_MODE_REG |= (*GPIO_A_MODE_REG | (1 << 10)); //Change GPIOA, pin 5 mode to output mode
 
 	while (1) {
-		*GPIO_A_OUTPUT |= (*GPIO_A_OUTPUT | 0x20);
-		*GPIO_A_OUTPUT &= ~(*GPIO_A_OUTPUT | 0x20);
+		*GPIO_A_OUTPUT |= (*GPIO_A_OUTPUT | (1<<5)); //Set 5th bit
+		delay();
+		*GPIO_A_OUTPUT &= ~(*GPIO_A_OUTPUT | (1<<5)); //Clear 5th bit
+		delay();
 	}
 }
