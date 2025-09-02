@@ -18,12 +18,20 @@
 
 #include <stdint.h>
 
-#if !defined(__SOFT_FP__) && defined(__ARM_FP)
-  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-#endif
+#define RCC_BASE_ADDRESS 0x40023800UL
+#define RCC_AHB1_ENABLE_RE ((uint32_t*)(RCC_BASE_ADDRESS + 0x30))
 
-int main(void)
-{
-    /* Loop forever */
-	for(;;);
+#define GPIO_A_BASE_ADDRESS 0x40020000
+#define GPIO_A_MODE_REG (uint32_t*)GPIO_A_BASE_ADDRESS
+#define GPIO_A_OUTPUT  ((uint32_t*)(GPIO_A_BASE_ADDRESS + 0x14))
+
+int main(void) {
+
+	*RCC_AHB1_ENABLE_RE |= (*RCC_AHB1_ENABLE_RE | 0X01); //Enable clock for GPIOA
+	*GPIO_A_MODE_REG |= (*GPIO_A_MODE_REG | 0X400); //Change GPIOA, pin 5 mode to output mode
+
+	while (1) {
+		*GPIO_A_OUTPUT |= (*GPIO_A_OUTPUT | 0x20);
+		*GPIO_A_OUTPUT &= ~(*GPIO_A_OUTPUT | 0x20);
+	}
 }
